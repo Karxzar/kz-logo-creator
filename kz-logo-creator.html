@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KZ Logo Creator - AI Logo Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #a29bfe;
+            --dark: #2d3436;
+            --light: #f7f7f7;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #a29bfe, #fd79a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 0 50px rgba(255,107,107,0.5);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-tab {
+            padding: 18px 30px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 17px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-3px);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .project-section {
+            background: rgba(255,255,255,0.07);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .project-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4ecdc4, #2e86ab);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .template-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .template-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .template-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--secondary);
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .template-preview {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        .ai-generator {
+            background: rgba(255,255,255,0.07);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .ai-input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .ai-btn {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(162, 155, 254, 0.4);
+        }
+
+        .designer-section {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .design-controls {
+            background: rgba(255,255,255,0.07);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .logo-preview-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px dashed rgba(255,255,255,0.1);
+        }
+
+        .logo-preview {
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+
+        .color-option.active {
+            border-color: white;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .project-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ai-result-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .designer-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .template-gallery {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .ai-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>KZ Logo Creator</h1>
+            <p>AI-Powered Logo Generator with Templates & Custom Projects</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('projects')">📁 My Projects</div>
+            <div class="nav-tab" onclick="switchTab('templates')">🎨 Templates</div>
+            <div class="nav-tab" onclick="switchTab('ai-generator')">🤖 AI Generator</div>
+            <div class="nav-tab" onclick="switchTab('designer')">✏️ Custom Designer</div>
+        </nav>
+
+        <!-- Projects Tab -->
+        <div id="projects" class="tab-content active">
+            <div class="project-section">
+                <div class="project-header">
+                    <h2>📁 My Logo Projects</h2>
+                    <div class="project-controls">
+                        <button class="btn btn-primary" onclick="createNewProject()">
+                            ➕ New Project
+                        </button>
+                        <button class="btn btn-secondary" onclick="saveProject()">
+                            💾 Save Project
+                        </button>
+                    </div>
+                </div>
+                <div id="projectList">
+                    <div class="project-item">
+                        <div>
+                            <h3>Welcome Project</h3>
+                            <p>Your first logo design</p>
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-secondary" onclick="loadProject(0)">Open</button>
+                            <button class="btn btn-secondary" onclick="deleteProject(0)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates Tab -->
+        <div id="templates" class="tab-content">
+            <h2>🎨 Choose a Template</h2>
+            <div class="template-gallery" id="templateGallery">
+                <!-- Templates will be loaded by JavaScript -->
+            </div>
+        </div>
+
+        <!-- AI Generator Tab -->
+        <div id="ai-generator" class="tab-content">
+            <div class="ai-generator">
+                <h2>🤖 AI Logo Generator</h2>
+                <p>Describe your logo and AI will create it for you!</p>
+                
+                <div class="ai-input-group">
+                    <input type="text" id="aiPrompt" class="ai-input" 
+                           placeholder="Describe your logo (e.g., 'gaming logo with dragon and fire')">
+                    <button class="ai-btn" onclick="generateAILogo()">
+                        🎨 Generate with AI
+                    </button>
+                </div>
+                
+                <div id="aiResults" class="template-gallery">
+                    <div class="ai-result-card">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                            AI LOGO
+                        </div>
+                        <p>AI Generated Logo</p>
+                        <button class="btn btn-primary" onclick="useAILogo()">Use This Logo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Designer Tab -->
+        <div id="designer" class="tab-content">
+            <div class="designer-section">
+                <div class="design-controls">
+                    <h3>Design Controls</h3>
+                    
+                    <div class="control-group">
+                        <label>Logo Text</label>
+                        <input type="text" id="logoText" class="ai-input" 
+                               placeholder="Enter logo text" oninput="updateLogoPreview()">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Tagline</label>
+                        <input type="text" id="logoTagline" class="ai-input" 
+                               placeholder="Enter tagline" oninput="updateLogoPreview()">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Main Color</label>
+                        <div class="color-palette" id="mainColorPicker">
+                            <!-- Color options will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Background Color</label>
+                        <div class="color-palette" id="bgColorPicker">
+                            <!-- Color options will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Font Style</label>
+                        <select id="fontStyle" class="ai-input" onchange="updateLogoPreview()">
+                            <option value="Arial">Arial - Modern</option>
+                            <option value="Georgia">Georgia - Classic</option>
+                            <option value="Courier">Courier - Tech</option>
+                            <option value="Verdana">Verdana - Clean</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="downloadLogo()">
+                        📥 Download Logo
+                    </button>
+                </div>
+
+                <div class="logo-preview-area">
+                    <div class="logo-preview" id="logoPreview">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2em; font-weight: bold;">YOUR LOGO</div>
+                            <div style="font-size: 1em; opacity: 0.8;">Preview</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Color Palettes
+        const colorPalettes = {
+            main: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#a29bfe', '#fdcb6e', '#00b894', 
+                  '#e84393', '#fd79a8', '#ffeaa7', '#fab1a0', '#74b9ff', '#55efc4'],
+            background: ['#2d3436', '#1a1a2e', '#0c0c0c', '#2c3e50', '#34495e', 
+                        '#ffffff', '#f7f7f7', '#b2bec3', '#636e72']
+        };
+
+        // Templates Data
+        const templates = [
+            { id: 1, name: "Gaming Pro", type: "gaming", color: "#ff6b6b" },
+            { id: 2, name: "Business Elite", type: "business", color: "#4ecdc4" },
+            { id: 3, name: "Tech Modern", type: "tech", color: "#45b7d1" },
+            { id: 4, name: "Creative Art", type: "creative", color: "#a29bfe" },
+            { id: 5, name: "Luxury Gold", type: "luxury", color: "#fdcb6e" },
+            { id: 6, name: "Nature Green", type: "nature", color: "#00b894" },
+            { id: 7, name: "RGB Keyboard", type: "gaming", color: "linear-gradient(45deg, #ff6b6b, #4ecdc4, #a29bfe)" },
+            { id: 8, name: "Neon Lights", type: "creative", color: "linear-gradient(45deg, #a29bfe, #fd79a8)" }
+        ];
+
+        // Current Project State
+        let currentProject = {
+            name: "Untitled Project",
+            logoText: "YOUR LOGO",
+            tagline: "",
+            mainColor: "#ff6b6b",
+            bgColor: "#2d3436",
+            fontStyle: "Arial",
+            template: null
+        };
+
+        let projects = JSON.parse(localStorage.getItem('kzLogoProjects')) || [];
+
+        // Initialize the application
+        function initApp() {
+            generateColorPickers();
+            loadTemplates();
+            loadProjects();
+            updateLogoPreview();
+        }
+
+        // Generate color pickers
+        function generateColorPickers() {
+            const mainPicker = document.getElementById('mainColorPicker');
+            const bgPicker = document.getElementById('bgColorPicker');
+            
+            mainPicker.innerHTML = '';
+            bgPicker.innerHTML = '';
+            
+            colorPalettes.main.forEach(color => {
+                const colorOption = document.createElement('div');
+                colorOption.className = 'color-option';
+                colorOption.style.background = color;
+                colorOption.setAttribute('data-color', color);
+                colorOption.onclick = function() {
+                    currentProject.mainColor = color;
+                    updateLogoPreview();
+                    document.querySelectorAll('#mainColorPicker .color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                };
+                if (color === currentProject.mainColor) colorOption.classList.add('active');
+                mainPicker.appendChild(colorOption);
+            });
+            
+            colorPalettes.background.forEach(color => {
+                const colorOption = document.createElement('div');
+                colorOption.className = 'color-option';
+                colorOption.style.background = color;
+                colorOption.setAttribute('data-color', color);
+                colorOption.onclick = function() {
+                    currentProject.bgColor = color;
+                    updateLogoPreview();
+                    document.querySelectorAll('#bgColorPicker .color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                };
+                if (color === currentProject.bgColor) colorOption.classList.add('active');
+                bgPicker.appendChild(colorOption);
+            });
+        }
+
+        // Load templates
+        function loadTemplates() {
+            const templateGallery = document.getElementById('templateGallery');
+            templateGallery.innerHTML = '';
+            
+            templates.forEach(template => {
+                const templateCard = document.createElement('div');
+                templateCard.className = 'template-card';
+                templateCard.innerHTML = `
+                    <div class="template-preview" style="background: ${template.color}">
+                        ${template.name}
+                    </div>
+                    <h4>${template.name}</h4>
+                    <button class="btn btn-primary" onclick="useTemplate(${template.id})">
+                        Use Template
+                    </button>
+                `;
+                templateGallery.appendChild(templateCard);
+            });
+        }
+
+        // Load projects
+        function loadProjects() {
+            const projectList = document.getElementById('projectList');
+            projectList.innerHTML = '';
+            
+            if (projects.length === 0) {
+                projectList.innerHTML = '<p>No projects yet. Create your first project!</p>';
+                return;
+            }
+            
+            projects.forEach((project, index) => {
+                const projectItem = document.createElement('div');
+                projectItem.className = 'project-item';
+                projectItem.innerHTML = `
+                    <div>
+                        <h3>${project.name}</h3>
+                        <p>${project.logoText} - ${project.template || 'Custom'}</p>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" onclick="loadProject(${index})">Open</button>
+                        <button class="btn btn-secondary" onclick="deleteProject(${index})">Delete</button>
+                    </div>
+                `;
+                projectList.appendChild(projectItem);
+            });
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Create new project
+        function createNewProject() {
+            const projectName = prompt('Enter project name:');
+            if (projectName) {
+                currentProject = {
+                    name: projectName,
+                    logoText: "NEW LOGO",
+                    tagline: "",
+                    mainColor: "#ff6b6b",
+                    bgColor: "#2d3436",
+                    fontStyle: "Arial",
+                    template: null
+                };
+                updateLogoPreview();
+                alert('New project created! Switch to Designer tab to start editing.');
+            }
+        }
+
+        // Save project
+        function saveProject() {
+            projects.push({...currentProject});
+            localStorage.setItem('kzLogoProjects', JSON.stringify(projects));
+            loadProjects();
+            alert('Project saved successfully!');
+        }
+
+        // Load project
+        function loadProject(index) {
+            currentProject = {...projects[index]};
+            document.getElementById('logoText').value = currentProject.logoText;
+            document.getElementById('logoTagline').value = currentProject.tagline;
+            document.getElementById('fontStyle').value = currentProject.fontStyle;
+            updateLogoPreview();
+            generateColorPickers();
+            switchTab('designer');
+            alert('Project loaded!');
+        }
+
+        // Delete project
+        function deleteProject(index) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                projects.splice(index, 1);
+                localStorage.setItem('kzLogoProjects', JSON.stringify(projects));
+                loadProjects();
+            }
+        }
+
+        // Use template
+        function useTemplate(templateId) {
+            const template = templates.find(t => t.id === templateId);
+            if (template) {
+                currentProject.template = template.name;
+                currentProject.mainColor = template.color;
+                updateLogoPreview();
+                generateColorPickers();
+                switchTab('designer');
+                alert(`Template "${template.name}" applied!`);
+            }
+        }
+
+        // AI Logo Generation
+        function generateAILogo() {
+            const prompt = document.getElementById('aiPrompt').value;
+            if (!prompt) {
+                alert('Please describe your logo first!');
+                return;
+            }
+            
+            const aiResults = document.getElementById('aiResults');
+            aiResults.innerHTML = '<div class="ai-result-card"><p>🔄 AI is generating your logo...</p></div>';
+            
+            setTimeout(() => {
+                aiResults.innerHTML = `
+                    <div class="ai-result-card">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                            AI LOGO
+                        </div>
+                        <p>AI Generated: ${prompt}</p>
+                        <button class="btn btn-primary" onclick="useAILogo()">Use This Logo</button>
+                    </div>
+                    <div class="ai-result-card">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #4ecdc4, #2e86ab);">
+                            AI LOGO
+                        </div>
+                        <p>AI Generated: ${prompt}</p>
+                        <button class="btn btn-primary" onclick="useAILogo()">Use This Logo</button>
+                    </div>
+                `;
+                alert('AI logos generated successfully!');
+            }, 2000);
+        }
+
+        // Use AI Logo
+        function useAILogo() {
+            currentProject.logoText = "AI GENERATED";
+            currentProject.tagline = "Powered by KZ AI";
+            updateLogoPreview();
+            switchTab('designer');
+            alert('AI logo applied to designer!');
+        }
+
+        // Update logo preview
+        function updateLogoPreview() {
+            const logoText = document.getElementById('logoText').value || 'YOUR LOGO';
+            const tagline = document.getElementById('logoTagline').value || '';
+            const fontStyle = document.getElementById('fontStyle').value;
+            
+            currentProject.logoText = logoText;
+            currentProject.tagline = tagline;
+            currentProject.fontStyle = fontStyle;
+            
+            const preview = document.getElementById('logoPreview');
+            preview.innerHTML = `
+                <div style="text-align: center; color: ${currentProject.mainColor}; 
+                           background: ${currentProject.bgColor}; padding: 40px; 
+                           border-radius: 10px; width: 100%; height: 100%; 
+                           display: flex; flex-direction: column; justify-content: center;
+                           font-family: ${fontStyle}">
+                    <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 15px;">
+                        ${logoText}
+                    </div>
+                    ${tagline ? `<div style="font-size: 1.1em; opacity: 0.9;">${tagline}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Download logo
+        function downloadLogo() {
+            alert('Logo download feature would be implemented here!');
+            // In a real implementation, this would generate and download a PNG file
+        }
+
+        // Initialize app when page loads
+        window.onload = initApp;
+    </script>
+</body>
+</html>
